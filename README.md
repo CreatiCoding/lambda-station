@@ -4,7 +4,7 @@
 
 ## 1. Getting Started
 
-AWS Lambda! 다음 두 줄로 매우 쉽게 시작할 수 있습니다!
+AWS Lambda! 다음 두 줄로 매우 쉽게 시작할 수 있습니다! 비어있는 REPO에서 해야하며 파일이 이미 있는 경우, `--force`를 사용해 Overwrite 할 수 있습니다.
 
 ```bash
 npx degit creaticoding/lambda-station
