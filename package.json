@@ -1,0 +1,26 @@
+{
+  "name": "lambda-station",
+  "version": "1.0.0",
+  "description": "람다를 매우 쉽게 시작할 수 있는 프로젝트",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "node deploy $1 $2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CreatiCoding/lambda-station.git"
+  },
+  "author": "CreatiCoding",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CreatiCoding/lambda-station/issues"
+  },
+  "homepage": "https://github.com/CreatiCoding/lambda-station#readme",
+  "dependencies": {
+    "aws-sdk": "^2.712.0",
+    "dotenvrc": "^1.0.1",
+    "fs": "^0.0.1-security",
+    "zip-lib": "^0.7.1"
+  }
+}
