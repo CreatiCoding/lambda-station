@@ -1,15 +1,16 @@
 {
-  "name": "lambda-station",
+  "name": "@creaticoding/lambda-station",
   "version": "1.0.0",
-  "description": "람다를 매우 쉽게 시작할 수 있는 프로젝트",
+  "description": "람다를 매우 빠르게 시작할 수 있는 프로젝트",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "node deploy $1 $2"
+    "deploy": "node index.js $1 $2"
   },
+  "keyword": "람다, AWS, Lambda, aws-cli, nodejs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CreatiCoding/lambda-station.git"
+    "url": "https://github.com/CreatiCoding/lambda-station.git"
   },
   "author": "CreatiCoding",
   "license": "MIT",
