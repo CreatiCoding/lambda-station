@@ -2,6 +2,9 @@ require("dotenvrc");
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const zl = require("zip-lib");
+const copy = require("recursive-copy");
+const rimraf = require("rimraf");
+
 const { AWS_REGION } = process.env;
 let [node, main, type, target] = process.argv;
 
@@ -52,6 +55,40 @@ try {
     })();
   } else if (type === Constant.LAMBDA_EDGE) {
   } else if (type === Constant.LAMBDA_LAYER) {
+    (async () => {
+      const { exec } = require("child_process");
+      await ((child) =>
+        new Promise((resolve, reject) => {
+          child.addListener("error", reject);
+          child.addListener("exit", resolve);
+        }))(exec(`cd ${target} && npm init -y && yarn install`));
+
+      fs.mkdirSync(`${target}/nodejs`);
+      await copy(`${target}/libs`, `${target}/node_modules`);
+      await copy(`${target}/node_modules`, `${target}/nodejs`);
+
+      zip.addFolder(`${target}/node_modules`);
+      zip.addFolder(`${target}/nodejs`);
+      zip.addFile(`${target}/package.json`);
+      await zip.archive(`${target}/layer.zip`);
+      console.log(`✅ [zip source] ${target}/layer.zip is created!`);
+
+      const result = await lambda
+        .publishLayerVersion({
+          Content: {
+            ZipFile: fs.readFileSync(`${target}/layer.zip`),
+          },
+          LayerName: function_name,
+        })
+        .promise();
+      fs.unlinkSync(`${target}/layer.zip`);
+      fs.unlinkSync(`${target}/yarn.lock`);
+      fs.unlinkSync(`${target}/package.json`);
+      rimraf.sync(`${target}/nodejs`);
+      rimraf.sync(`${target}/node_modules`);
+      console.log("✅ [publishLayerVersion] complete!");
+      console.log(result);
+    })();
   } else {
   }
 } catch (error) {
