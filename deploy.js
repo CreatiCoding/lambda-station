@@ -2,8 +2,8 @@ require("dotenvrc");
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const zl = require("zip-lib");
-const copy = require("recursive-copy");
 const rimraf = require("rimraf");
+const { exec } = require("child_process");
 
 const { AWS_REGION } = process.env;
 let [node, main, type, target] = process.argv;
@@ -24,6 +24,13 @@ const function_name = target.split("/").pop();
 const lambda = new AWS.Lambda();
 const zip = new zl.Zip();
 
+const shell = (cmd) =>
+  ((child) =>
+    new Promise((resolve, reject) => {
+      child.addListener("error", reject);
+      child.addListener("exit", resolve);
+      child.stdout.on("data", (data) => console.log(data));
+    }))(exec(cmd));
 try {
   if (type === Constant.LAMBDA) {
     (async () => {
@@ -56,21 +63,17 @@ try {
   } else if (type === Constant.LAMBDA_EDGE) {
   } else if (type === Constant.LAMBDA_LAYER) {
     (async () => {
-      const { exec } = require("child_process");
-      await ((child) =>
-        new Promise((resolve, reject) => {
-          child.addListener("error", reject);
-          child.addListener("exit", resolve);
-        }))(exec(`cd ${target} && npm init -y && yarn install`));
+      await shell(`cd ${target} && yarn install`);
+      await shell(`pwd`);
+      await shell(`mkdir ${target}/nodejs`);
+      await shell(`cp -r ${target}/libs/* ${target}/node_modules`);
+      await shell(`cp -r ${target}/node_modules ${target}/nodejs`);
 
-      fs.mkdirSync(`${target}/nodejs`);
-      await copy(`${target}/libs`, `${target}/node_modules`);
-      await copy(`${target}/node_modules`, `${target}/nodejs`);
-
-      zip.addFolder(`${target}/node_modules`);
-      zip.addFolder(`${target}/nodejs`);
-      zip.addFile(`${target}/package.json`);
+      zip.addFolder(`${target}/node_modules`, "node_modules");
+      zip.addFolder(`${target}/nodejs`, "nodejs");
+      zip.addFile(`${target}/package.json`, "package.json");
       await zip.archive(`${target}/layer.zip`);
+
       console.log(`✅ [zip source] ${target}/layer.zip is created!`);
 
       const result = await lambda
@@ -83,7 +86,6 @@ try {
         .promise();
       fs.unlinkSync(`${target}/layer.zip`);
       fs.unlinkSync(`${target}/yarn.lock`);
-      fs.unlinkSync(`${target}/package.json`);
       rimraf.sync(`${target}/nodejs`);
       rimraf.sync(`${target}/node_modules`);
       console.log("✅ [publishLayerVersion] complete!");
