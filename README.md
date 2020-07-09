@@ -1,6 +1,6 @@
 # Lambda Station
 
-> 람다를 매우 쉽게 시작할 수 있는 프로젝트
+> 람다를 매우 빠르게 시작할 수 있는 프로젝트
 
 ## 1. Getting Started
 
@@ -25,7 +25,7 @@ export AWS_REGION=ap-northeast-2
 export AWS_DEFAULT_REGION=ap-northeast-2
 ```
 
-## 3. How to deploy lmabda-directory
+## 3. How to deploy lambda-directory
 
 다음 명령어로 Lambda를 손쉽게 배포하세요!
 
