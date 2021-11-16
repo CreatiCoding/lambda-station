@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/CreatiCoding/lambda-station#readme",
   "dependencies": {
-    "aws-sdk": "^2.712.0",
+    "aws-sdk": "^2.814.0",
     "child_process": "^1.0.2",
     "dotenvrc": "^1.0.1",
     "fs": "^0.0.1-security",
